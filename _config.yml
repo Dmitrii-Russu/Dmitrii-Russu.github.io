@@ -29,8 +29,11 @@ url: "https://dmitrii-russu.github.io"
 github:
   username: Dmitrii-Russu # change to your GitHub username
 
-twitter:
-  username: twitter_username # change to your Twitter username
+linkedin:
+  username: dmitrii-russu-5b77b3329
+
+#twitter:
+  #username: twitter_username # change to your Twitter username
 
 social:
   # Change to your full name.
@@ -40,7 +43,7 @@ social:
   fediverse_handle: # fill in your fediverse handle. E.g. "@username@domain.com"
   links:
     # The first element serves as the copyright owner's link
-    - https://twitter.com/username # change to your Twitter homepage
+    #- https://twitter.com/username # change to your Twitter homepage
     - https://github.com/Dmitrii-Russu
     - https://www.linkedin.com/in/dmitrii-russu-5b77b3329/
     # Uncomment below to add more social links
