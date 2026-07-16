@@ -1,5 +1,5 @@
 ---
-title: One-to-Many in Java: When a Collection in the Parent Is Justified — and When It Is Not
+title: "One-to-Many in Java: When a Collection in the Parent Is Justified — and When It Is Not"
 date: 2026-07-16 13:00:00 +0200
 categories: [Architecture, Persistence]
 tags: [java, jpa, hibernate, spring-data-jdbc, jdbc, one-to-many, ddd]
