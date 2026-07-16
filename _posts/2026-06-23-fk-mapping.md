@@ -1,4 +1,9 @@
-# One-to-Many in Java: when a collection in the parent is justified, and when it is not
+---
+title: One-to-Many in Java: When a Collection in the Parent Is Justified — and When It Is Not
+date: 2026-07-16 13:00:00 +0200
+categories: [Architecture, Persistence]
+tags: [java, jpa, hibernate, spring-data-jdbc, jdbc, one-to-many, ddd]
+---
 
 The relational model stores the FK on the child table side. In Java we have two ways to reflect this relationship: a collection in the parent entity (`@OneToMany` / `List<Child>`) or a reference in the child (`@ManyToOne` / `long parentId`). The choice affects write behaviour — and this is precisely where most decisions are made without sufficient justification.
 
