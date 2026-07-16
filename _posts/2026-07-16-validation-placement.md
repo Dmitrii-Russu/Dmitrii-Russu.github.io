@@ -1,4 +1,9 @@
-# Criteria for Placing Validation in an Application
+---
+title: Criteria for Placing Validation in an Application
+date: 2026-07-16 12:00:00 +0200
+categories: [Architecture, Persistence]
+tags: [validation, transaction-script, rich-domain-model, fat-database, concurrency, database, java]
+---
 
 ## 1. Context and Scope
 
