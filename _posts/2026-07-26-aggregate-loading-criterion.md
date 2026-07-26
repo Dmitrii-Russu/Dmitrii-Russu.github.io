@@ -1,5 +1,5 @@
 ---
-title: "The service is getting bloated" — move the logic into the entity? Here's the real criterion
+title: "\"The service is getting bloated\" — move the logic into the entity? Here's the real criterion"
 date: 2026-07-26 12:00:00 +0200
 categories: [Architecture, Domain Modeling]
 tags: [ddd, java, aggregate, transaction-script, cqrs]
