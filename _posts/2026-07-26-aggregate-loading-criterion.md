@@ -4,9 +4,6 @@ date: 2026-07-26 12:00:00 +0200
 categories: [Architecture, Domain Modeling]
 tags: [ddd, java, aggregate, transaction-script, cqrs]
 ---
-
-# "The service is getting bloated — move the logic into the entity" is not a criterion. Here's the one that actually works
-
 **In short:** an aggregate is worth loading only when its state is required to decide whether the new state is valid. If an operation is fully determined by its input and doesn't check any domain invariants, loading the aggregate is just an expensive intermediate step — not a sign of "doing DDD right."
 
 ---
