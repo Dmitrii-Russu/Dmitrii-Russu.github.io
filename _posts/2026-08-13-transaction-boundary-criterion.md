@@ -4,9 +4,6 @@ date: 2026-08-13 12:00:00 +0200
 categories: [Architecture, Transactions]
 tags: [transactions, spring, jpa, repository-pattern, layered-architecture]
 ---
-
-# "Grouping SQL Queries" Is Not a Transaction Boundary. Here's the Real Criterion
-
 In short: **a transaction boundary isn't determined by which SQL queries physically execute together, but by which component knows about the business invariant that ties multiple repository calls together.** In data-centric code these two things coincide — which is why the classic examples become confusing the moment a layered architecture appears: the repository stops being the place where business meaning lives, and only the service still knows what must happen — or not happen — as a single unit.
 
 ## The Intuition Everyone Starts With
