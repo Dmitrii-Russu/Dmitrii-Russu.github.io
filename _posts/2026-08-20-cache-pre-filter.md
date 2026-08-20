@@ -1,6 +1,6 @@
 ---
 title: "Cache as a Pre-Filter Before a Database Constraint"
-date: 2026-08-20 12:00:00 +0200
+date: 2026-08-20 08:00:00 +0300
 categories: [Architecture, Caching]
 tags: [caching, spring, database, data-integrity, cache-consistency]
 ---
