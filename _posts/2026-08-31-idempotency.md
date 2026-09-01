@@ -1,9 +1,10 @@
-# Idempotency: Why a Repeated Click Can Cost a Business Money
-
-*Dmitrii Russu — Java Backend Developer | Spring Boot, PostgreSQL, REST API*
-*August 31, 2026*
-
 ---
+title: "Idempotency: Why a Repeated Click Can Cost a Business Money"
+date: 2026-08-31 08:00:00 +0300
+categories: [Architecture, Backend]
+tags: [idempotency, rest-api, spring, database, data-integrity]
+---
+In short: idempotency isn't about rejecting duplicate requests — it's about making sure the same intent, delivered more than once, never triggers the side effect a second time. A retry after a dropped connection and a brand-new order look identical on the wire, but only the server can tell them apart — and only if it captures intent, not just input.
 
 Idempotency of an operation means that executing it again with the same input produces the same result as executing it once. Whether an operation runs once or ten times in a row, the resulting system state is identical.
 
