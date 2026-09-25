@@ -226,4 +226,4 @@ Catch format errors at the door — it's cheap and keeps obvious garbage out. Le
 
 How do you draw this line in your own services — everything in the database, or do you lean more on the application layer? Curious how others split it.
 
-Code: [link to repository]
+Code: https://github.com/java-backend-architecture/constraint-violation-translation
