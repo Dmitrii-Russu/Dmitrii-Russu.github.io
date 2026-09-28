@@ -13,8 +13,6 @@ It's a question every team building on OAuth2 and Spring eventually faces, and t
 
 Below are three common approaches, what each one really costs, and why I believe the boundary between the Authorization Server and the Resource Server should stay where it belongs.
 
-A resource server often needs more than what a JWT carries: an internal `userId`, domain roles, domain-specific attributes. There are three ways to get them, and each has its price.
-
 ## Approach #1: A Custom User on the Authorization Server
 
 The most direct path is to extend the user model: add a UUID instead of a username key, your own roles, your own fields.
