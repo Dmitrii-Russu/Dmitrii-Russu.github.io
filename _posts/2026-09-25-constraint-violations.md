@@ -1,9 +1,17 @@
 ---
 title: "Constraint Violations: Why the Database Still Gets the Final Say"
 date: 2026-09-25 08:00:00 +0300
+last_modified_at: 2026-11-27 09:00:00 +0300
 categories: [Architecture, Backend]
 tags: [spring, postgresql, validation, data-integrity, rest-api]
 ---
+
+> **Update (Nov 2026):** I have revised two positions from this post.
+>
+> 1. **CHECK and NOT NULL violations that merely duplicate input validation are not client errors.** After a request has passed Jakarta Validation, such a violation means the code and the schema are out of sync: the client cannot fix anything. It is better answered with HTTP 500 and diagnostics in the log than with the 400 shown below. Uniqueness violations stay HTTP 409. Details: [Handling Integrity Violations in Spring Boot + PostgreSQL: 409 for Uniqueness Violations, 500 for Schema Mismatch](LINK).
+> 2. **Translating into domain exceptions is justified only when something in the core consumes them.** In this post the only consumer is the HTTP handler, so the translation layer below is more than the example needs. Details: [When Should a Database Exception Be Translated into a Domain Exception? (Spring)](LINK).
+>
+> The rest of the post (validation at the boundary, why a pre-check cannot replace a constraint, named constraints) still stands. The original text is kept below, with notes where the approach changed.
 
 In short: input validation is a filter, not a guarantee. It rejects malformed requests before they cost you anything, but it can't see what's already in the table. Uniqueness and integrity are facts about storage state, and only storage can enforce them — which means the database ends up checking some of the same things your code already checked, on purpose.
 
@@ -73,6 +81,8 @@ CREATE TABLE IF NOT EXISTS customer (
 
 ## An entity identifier is not an error vocabulary
 
+> **Update (Nov 2026):** the three exception classes and the translator below are justified only if something in the core reacts differently to each of them. Here the only consumer is the `@RestControllerAdvice`, which could read the SQLState and the constraint name directly. See [When Should a Database Exception Be Translated into a Domain Exception? (Spring)](LINK).
+
 Spring converts JDBC failures into `DataIntegrityViolationException`, and request validation failures into `MethodArgumentNotValidException`. Both are technical — the framework has no idea what your domain calls things, so the business interpretation is on you. Three small classes carry it, with no dependency on Spring or JDBC:
 
 ```java
@@ -96,6 +106,8 @@ public class InvalidCustomerException extends RuntimeException {
 ```
 
 The original exception is kept as the `cause`, so when the domain exception gets logged, the root cause is still visible in the stack trace.
+
+> **Update (Nov 2026):** be careful with that. The message of a PostgreSQL integrity exception can include the `DETAIL` line with the values of the offending row (an email, a name). For integrity violations, log structured fields (SQLState, constraint, column) and do not pass the exception itself to the logger.
 
 ## The translator
 
@@ -143,6 +155,8 @@ public class CustomerConstraintViolationTranslator {
 ```
 
 An unrecognized violation comes back untouched and ends up as a 500. That's deliberate: a constraint someone forgot to map should be loud, not quietly disguised as a 400.
+
+> **Update (Nov 2026):** the `23502` and `23514` branches above turn violations into a 400. That is right only for rules that the client can break and fix, and that Jakarta does not check. For a CHECK or NOT NULL that duplicates input validation (here: name length, email format, `name` and `email` not null), a violation after a successful validation is a bug in the code or in the schema, and a 400 sends the client to fix something it cannot fix. Such cases belong in the 500 branch with `reason=validation_schema_mismatch` in the log. Also, the constraint name should be read via `getConstraint()` and the column via `getColumn()` as above, never parsed out of the message text.
 
 ## Repository and handler
 
@@ -198,7 +212,11 @@ GET /customers/999
 404 {"detail":"Customer with id 999 not found", "status":404, ...}
 ```
 
+> **Update (Nov 2026):** a response like "this email is already registered" is convenient for the client, but in registration and password-recovery flows it lets an attacker probe which accounts exist. How specific the message can be depends on the security requirements of the API.
+
 A two-character name never reaches the database at all — `@Size` stops it, and the client gets a 400 straight from `MethodArgumentNotValidException`. `chk_customer_name_min_length` only fires if a value reaches the repository bypassing that check. When it does, the translator produces an `InvalidCustomerException` and the same 400, with the message "Customer name is too short (minimum 3 characters)."
+
+> **Update (Nov 2026):** see the note under the translator: in the revised approach this case returns a 500 with diagnostics in the log, not a 400.
 
 ## Why keep the constraint if validation already covers it
 
@@ -223,6 +241,8 @@ The database catches whatever the layers above missed: a race on `UNIQUE`, direc
 ## The takeaway
 
 Catch format errors at the door — it's cheap and keeps obvious garbage out. Leave uniqueness and integrity to the database — a pre-check can't close the race, only the constraint can. Translate what comes back into exceptions your domain actually speaks, and let `ProblemDetail` carry that to the client. The database ends up checking some of what the layers above already checked. That's not redundancy for its own sake — it's the one layer that doesn't have to trust anything upstream of it.
+
+> **Update (Nov 2026):** the revised version of this takeaway: classify a violation by who consumes the error and what the constraint means. A uniqueness violation is a client conflict (409). A CHECK or NOT NULL that duplicates validation is a code/schema mismatch (500 plus diagnostics). Introduce a domain exception only when something in the core makes a decision based on it.
 
 How do you draw this line in your own services — everything in the database, or do you lean more on the application layer? Curious how others split it.
 
